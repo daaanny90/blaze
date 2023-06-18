@@ -14,10 +14,17 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 app.get("/", (req, res) => {
-  const url = req.query.at as string;
+  let url = req.query.at as string;
 
   if (!url) {
     res.sendFile(path.join(__dirname + "/dist/index.html"));
+  }
+
+  var re = new RegExp("^(http|https)://", "i");
+  var match = re.test(url);
+
+  if (!match) {
+    url = `https://${url}`
   }
 
   got(url)
