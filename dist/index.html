@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>Welcome to Blaze this PAge</h1>
+    <p>Paste here the URL you want to wisit</p>
+    <label for="url">URL to blaze</label>
+    <input name="" utl id="typ" type="text" placeholder="Write an URL..." />
+    <button>BLAZE IT!</button>
+
+    <script>
+      const button = document.querySelector("button");
+      const input = document.querySelector("input");
+      button.addEventListener("click", function () {
+        const blazeUrl = "https://ill-red-skunk-wig.cyclic.app";
+        location.href = `${blazeUrl}/at=${input.value}`;
+      });
+    </script>
+  </body>
+</html>
