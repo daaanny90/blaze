@@ -2,15 +2,23 @@ import express from "express";
 import { Readability } from "@mozilla/readability";
 import { JSDOM } from "jsdom";
 import got from "got";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const app = express();
 const port = 5763;
 
+const __filename = fileURLToPath(import.meta.url);
+
+const __dirname = path.dirname(__filename);
+
+let url: string
+
 app.get("/", (req, res) => {
-  const url = req.query.at as string;
+  url = req.query.at as string;
 
   if (!url) {
-    res.send("URL not valid");
+    res.sendFile(path.join(__dirname + "/dist/index.html"));
   }
 
   got(url)
@@ -29,8 +37,4 @@ app.get("/", (req, res) => {
     .catch((err) => {
       console.log(err);
     });
-});
-
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
 });
