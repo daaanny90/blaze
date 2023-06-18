@@ -13,10 +13,8 @@ const __filename = fileURLToPath(import.meta.url);
 
 const __dirname = path.dirname(__filename);
 
-let url: string
-
 app.get("/", (req, res) => {
-  url = req.query.at as string;
+  const url = req.query.at as string;
 
   if (!url) {
     res.sendFile(path.join(__dirname + "/dist/index.html"));
@@ -38,4 +36,8 @@ app.get("/", (req, res) => {
     .catch((err) => {
       console.log(err);
     });
+});
+
+app.listen(port, () => {
+  console.log(`Got request`);
 });
