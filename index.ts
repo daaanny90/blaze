@@ -4,6 +4,7 @@ import { JSDOM } from "jsdom";
 import got from "got";
 import path from "path";
 import { fileURLToPath } from "url";
+import fetch from 'node-fetch'
 
 const app = express();
 const port = 8888;
@@ -13,8 +14,8 @@ const __filename = fileURLToPath(import.meta.url);
 
 const __dirname = path.dirname(__filename);
 
-app.get("/", (req, res) => {
-  const searchEngine = "http://html.duckduckgo.com/html/";
+app.get("/", async (req, res) => {
+  const searchEngine = "https://api.search.brave.com/res/v1/web/search";
   let query = req.query.q as string;
 
   if (!query) {
@@ -22,58 +23,29 @@ app.get("/", (req, res) => {
     return
   }
 
-  const options = {
+  fetch(`${searchEngine}?q=${query}`, {
     headers: {
-      'user-agent': req.headers["user-agent"]
-    }
-  }
-
-  got(`${searchEngine}?q=${query}`, options)
-    .then((response) => {
-
-      if (response.statusCode !== 200) {
-        console.log("Error code:", response.statusCode)
-        res.send(`Error code ${response.statusCode}`)
-        return;
-      }
-
-      const dom = new JSDOM(response.body);
-      const links = dom.window.document.querySelectorAll('link')
-      const results = dom.window.document.querySelectorAll('.result')
-
-      // add custom style
-      const style = dom.window.document.createElement('style')
-      dom.window.document.querySelector('head')?.appendChild(style)
-      style.innerHTML = `
-        .result {
-          padding: 1rem;
-          border: 1px solid black;
-          margin-bottom: 10px:
-        }
-
-        .result__snippet, .result__url {
-          text-decoration: none;
-          color: black
-        }
-      `
-      // clean up dom
-      links.forEach(linkTag => linkTag.remove())
-      dom.window.document.querySelector('form')?.remove()
-      dom.window.document.querySelector('#header')?.remove()
-
-      // modify urls
-      results.forEach(result => {
-        const hrefArray = result.querySelector('.result__snippet')?.getAttribute('href')?.split('')
-        hrefArray?.splice(0,25)
-        const cleanHref = hrefArray?.join('')
-        const newHref = `https://ill-red-skunk-wig.cyclic.app/blazed?url=${cleanHref}`;
-        result.querySelector('.result__snippet')?.setAttribute('href', newHref)
-        result.querySelector('.result__url')?.setAttribute('href', newHref)
-        result.querySelector('.result__a')?.setAttribute('href', newHref)
+      "Accept": "*/*",
+      "Accept-Encoding": "gzip, deflate, br",
+      "X-Subscription-Token": process.env.CYCLIC_BRAVE_KEY,
+    },
+  })
+    .then((page) => {
+      page.json().then(response => {
+        const results = []
+        response.web.results.forEach(result => {
+          results.push(`
+            <div>
+              <h2>${result.title}</h2>
+              <a href="https://ill-red-skunk-wig.cyclic.app/blazed?url=${result.url}">${result.url}</a>
+             <a href="${result.url}">
+              <p>${result.description}</p>
+             </a>              
+            </div>
+          `);
+        })
+        res.send(results.join(''))
       })
-
-      res.send(dom.serialize())
-      return;
     })
     .catch((err) => {
       console.log(err);
