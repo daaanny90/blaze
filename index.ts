@@ -23,16 +23,23 @@ app.get("/", async (req, res) => {
     return
   }
 
+  const key = process.env.CYCLIC_BRAVE_KEY
+
+  if (!key) {
+    throw new Error("No brave key found");
+  }
+
   fetch(`${searchEngine}?q=${query}`, {
     headers: {
       "Accept": "*/*",
       "Accept-Encoding": "gzip, deflate, br",
-      "X-Subscription-Token": process.env.CYCLIC_BRAVE_KEY,
+      "X-Subscription-Token": key,
     },
   })
     .then((page) => {
       page.json().then(response => {
-        const results = []
+        const results: any[] = []
+        // @ts-ignore
         response.web.results.forEach(result => {
           results.push(`
             <div>
