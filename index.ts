@@ -97,6 +97,10 @@ got(pageToBlaze)
    }); 
 })
 
+app.get("/info", (_, res) => {
+  res.sendFile(path.join(__dirname + "/dist/info.html"));
+})
+
 app.listen(port, () => {
   console.log(`Got request`);
 });
