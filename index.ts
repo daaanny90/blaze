@@ -45,6 +45,7 @@ app.get("/", async (req, res) => {
           results.push(`
             <div>
               <h2>${result.title}</h2>
+              <span>${result.meta_url.hostname}</span>
              <a href="https://blaze.cyclic.app/blazed?url=${result.url}">
               <p>${result.description}</p>
              </a>              
@@ -57,6 +58,10 @@ app.get("/", async (req, res) => {
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width,initial-scale=1">
             <title>Blaze The Page</title>
+            <style>
+              h2 {margin-bottom:0}
+              span {font-size: .9rem}
+            </style>
           </head>
           <body>
             ${results.join("")}
