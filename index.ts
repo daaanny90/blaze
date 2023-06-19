@@ -14,7 +14,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 app.get("/", (req, res) => {
-  const searchEngine = "https://html.duckduckgo.com/html/";
+  const searchEngine = "http://html.duckduckgo.com/html/";
   let query = req.query.q as string;
 
   if (!query) {
