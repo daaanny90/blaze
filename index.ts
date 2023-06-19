@@ -53,7 +53,7 @@ app.get("/", (req, res) => {
         const hrefArray = result.querySelector('.result__snippet')?.getAttribute('href')?.split('')
         hrefArray?.splice(0,25)
         const cleanHref = hrefArray?.join('')
-        const newHref = `http://localhost:8888/blazed?url=${cleanHref}`
+        const newHref = `https://ill-red-skunk-wig.cyclic.app/blazed?url=${cleanHref}`;
         result.querySelector('.result__snippet')?.setAttribute('href', newHref)
         result.querySelector('.result__url')?.setAttribute('href', newHref)
         result.querySelector('.result__a')?.setAttribute('href', newHref)
