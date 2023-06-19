@@ -14,7 +14,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 app.get("/", (req, res) => {
-  const searchEngine = "https://duckduckgo.com/html/";
+  const searchEngine = "https://html.duckduckgo.com/html/";
   let query = req.query.q as string;
 
   if (!query) {
@@ -30,7 +30,7 @@ app.get("/", (req, res) => {
         res.send(`Error code ${response.statusCode}`)
         return;
       }
-      
+
       const dom = new JSDOM(response.body);
       const links = dom.window.document.querySelectorAll('link')
       const results = dom.window.document.querySelectorAll('.result')
