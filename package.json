@@ -6,8 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
-    "build": "npx tsc",
-    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q index.js\""
+    "build": "npm run html-minify && npx tsc",
+    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q index.js\"",
+    "html-minify": "html-minifier --input-dir dist --output-dir dist --file-ext html --remove-comments --collapse-whitespace --minify-js true --minify-css true"
   },
   "author": "Danny Spina",
   "license": "ISC",
@@ -17,6 +18,7 @@
     "express": "^4.18.2",
     "fetch": "^1.1.0",
     "got": "^13.0.0",
+    "html-minifier": "^4.0.0",
     "jsdom": "^22.1.0",
     "node-fetch": "^3.3.1",
     "node-html-parser": "^6.1.5"
