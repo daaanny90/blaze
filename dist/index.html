@@ -48,10 +48,17 @@
       timeout errors from occurring.
     </p>
     <script>
+      const DEV_MODE = false
+
+      let url = "https://ill-red-skunk-wig.cyclic.app"
+      if (DEV_MODE) {
+        url = "http://localhost:8888"
+      }
+
       const b = document.querySelector("button"),
         i = document.querySelector("input");
       b.addEventListener("click", () => {
-        location.href = `https://ill-red-skunk-wig.cyclic.app?q=${encodeURI(i.value)}`;
+        location.href = `${url}?q=${encodeURI(i.value)}`;
       });
     </script>
   </body>

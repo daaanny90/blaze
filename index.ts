@@ -24,6 +24,13 @@ app.get("/", (req, res) => {
 
   got(`${searchEngine}?q=${query}`)
     .then((response) => {
+
+      if (response.statusCode !== 200) {
+        console.log("Error code:", response.statusCode)
+        res.send(`Error code ${response.statusCode}`)
+        return;
+      }
+      
       const dom = new JSDOM(response.body);
       const links = dom.window.document.querySelectorAll('link')
       const results = dom.window.document.querySelectorAll('.result')
