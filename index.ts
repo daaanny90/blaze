@@ -22,7 +22,13 @@ app.get("/", (req, res) => {
     return
   }
 
-  got(`${searchEngine}?q=${query}`)
+  const options = {
+    headers: {
+      'user-agent': req.headers["user-agent"]
+    }
+  }
+
+  got(`${searchEngine}?q=${query}`, options)
     .then((response) => {
 
       if (response.statusCode !== 200) {
