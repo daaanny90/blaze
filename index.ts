@@ -5,6 +5,7 @@ import got from "got";
 import path from "path";
 import { fileURLToPath } from "url";
 import fetch from 'node-fetch'
+import "dotenv/config";
 
 const app = express();
 const port = 8888;
@@ -45,13 +46,23 @@ app.get("/", async (req, res) => {
             <div>
               <h2>${result.title}</h2>
               <a href="https://ill-red-skunk-wig.cyclic.app/blazed?url=${result.url}">${result.url}</a>
-             <a href="${result.url}">
+             <a href="https://ill-red-skunk-wig.cyclic.app/blazed?url=${result.url}">
               <p>${result.description}</p>
              </a>              
             </div>
+            <hr />
           `);
         })
-        res.send(results.join(''))
+        res.send(`<html>
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width,initial-scale=1">
+            <title>Blaze The Page</title>
+          </head>
+          <body>
+            ${results.join("")}
+          </body>
+        </html>`);
       })
     })
     .catch((err) => {
