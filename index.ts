@@ -45,8 +45,8 @@ app.get("/", async (req, res) => {
           results.push(`
             <div>
               <h2>${result.title}</h2>
-              <a href="https://ill-red-skunk-wig.cyclic.app/blazed?url=${result.url}">${result.url}</a>
-             <a href="https://ill-red-skunk-wig.cyclic.app/blazed?url=${result.url}">
+              <a href="https://blaze.cyclic.app/blazed?url=${result.url}">${result.url}</a>
+             <a href="https://blaze.cyclic.app/blazed?url=${result.url}">
               <p>${result.description}</p>
              </a>              
             </div>
