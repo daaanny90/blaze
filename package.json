@@ -19,7 +19,7 @@
     "fetch": "^1.1.0",
     "got": "^13.0.0",
     "html-minifier": "^4.0.0",
-    "jsdom": "^22.1.0",
+    "linkedom": "^0.14.26",
     "node-fetch": "^3.3.1",
     "node-html-parser": "^6.1.5"
   },

@@ -1,11 +1,11 @@
 import express from "express";
 import { Readability, isProbablyReaderable } from "@mozilla/readability";
-import { JSDOM } from "jsdom";
 import got from "got";
 import path from "path";
 import { fileURLToPath } from "url";
 import fetch from "node-fetch";
 import "dotenv/config";
+import { parseHTML } from "linkedom";
 
 const app = express();
 const port = 8888;
@@ -78,31 +78,31 @@ app.get("/", async (req, res) => {
     });
 });
 
-app.get("/blazed", (req, res) => {
+app.get("/blazed", async (req, res) => {
   const pageToBlaze = req.query.url as string;
+  console.time("blaze");
 
-  got(pageToBlaze)
-    .then((response) => {
-      const dom = new JSDOM(response.body);
+  try {
+    const response = await got(pageToBlaze);
+    const { document } = parseHTML(response.body);
 
-      if (!isProbablyReaderable(dom.window.document)) {
-        res.sendFile(path.join(__dirname + "/dist/not_blazed.html"));
-        return;
-      }
+    if (!isProbablyReaderable(document)) {
+      return res.sendFile(path.join(__dirname, "/dist/not_blazed.html"));
+    }
 
-      let reader = new Readability(dom.window.document);
-      let article = reader.parse();
+    const reader = new Readability(document);
+    const article = reader.parse();
 
-      if (!article) {
-        res.send("Something went wrong");
-        return;
-      }
+    if (!article) {
+      return res.send("Something went wrong");
+    }
 
-      res.send(article.content);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+    res.send(article.content);
+  } catch (err) {
+    console.log(err);
+  } finally {
+    console.timeEnd("blaze");
+  }
 });
 
 app.get("/info", (_, res) => {
