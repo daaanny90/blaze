@@ -11,6 +11,7 @@
     <title>Blaze</title>
     <style>
       body {
+        font-family: sans-serif;
         text-align: center;
         display: flex;
         align-items: center;
@@ -46,10 +47,10 @@
     </section>
     <footer>
       <a href="/info">What is this?</a>
-      <a href="https://www.buymeacoffee.com/dannyspina">Buy me a beer</a>
+      <a href="https://www.buymeacoffee.com/dannyspina">Buy me a 🍺</a>
     </footer>
     <script>
-      const DEV = 0,
+      const DEV = "%NODE_ENV%" !== "production",
         e = DEV ? "http://localhost:8888" : "https://blaze.cyclic.app",
         t = document.querySelector("button"),
         c = document.querySelector("input");
