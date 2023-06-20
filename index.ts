@@ -9,6 +9,7 @@ import { parseHTML } from "linkedom";
 import XHR2 from "xhr2";
 const XMLHttpRequest = XHR2.XMLHttpRequest;
 import { minify } from "html-minifier";
+import { blazeUrl, injectBlazeToPageLinks } from "./utils.js";
 
 const app = express();
 const port = 8888;
@@ -45,7 +46,7 @@ app.get("/", async (req, res) => {
 
   try {
     const xhr = new XMLHttpRequest();
-    xhr.open("GET", `${searchEngine}?q=${query}`, true);
+    xhr.open("GET", `${searchEngine}?q=${query}&safesearch=moderate`, true);
     xhr.setRequestHeader("Accept", "*/*");
     xhr.setRequestHeader("X-Subscription-Token", key);
 
@@ -60,15 +61,11 @@ app.get("/", async (req, res) => {
       }
       const data = JSON.parse(xhr.responseText);
 
-      const url = process.env.DEV_MODE
-        ? "http://localhost:8888/blazed"
-        : "https://blaze.cyclic.app/blazed";
-
       // @ts-ignore
       const results = data.web.results.map(
         (result: any) => `
             <article>
-              <a href="${url}?url=${result.url}">
+              <a href="${blazeUrl}/blazed?url=${result.url}">
                 <h2>${result.title}</h2>
               </a>
               <span>${result.meta_url.hostname}</span>
@@ -135,6 +132,11 @@ app.get("/blazed", async (req, res) => {
     </head>
     <body>
      ${article.content}
+      <script>
+        ${injectBlazeToPageLinks}
+        const url = "${blazeUrl}"
+        injectBlazeToPageLinks(url)
+      </script>
     </body></html>
     `;
 
