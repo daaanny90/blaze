@@ -96,7 +96,9 @@ app.get("/blazed", async (req, res) => {
   const pageToBlaze = req.query.url as string;
 
   try {
-    const response = await got(pageToBlaze);
+    const response = await got(pageToBlaze, {
+      headers: { Accept: "text/html" },
+    });
     const { document } = parseHTML(response.body);
     if (!isProbablyReaderable(document)) {
       return res.sendFile(path.join(__dirname, "/dist/not_blazed.html"));
