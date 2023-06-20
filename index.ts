@@ -113,6 +113,10 @@ app.get("/ooops", (_, res) => {
   res.sendFile(path.join(__dirname + "/dist/info_not_blazed.html"));
 });
 
+app.get("/favicon.svg", (_, res) => {
+  res.sendFile(path.join(__dirname + "/favicon.svg"));
+});
+
 app.listen(port, () => {
   console.log(`Got request`);
 });
