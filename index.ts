@@ -46,13 +46,13 @@ app.get("/", async (req, res) => {
         // @ts-ignore
         response.web.results.forEach((result) => {
           results.push(`
-            <div>
+            <article>
             <a href="${url}?url=${result.url}">
               <h2>${result.title}</h2>
               </a>              
               <span>${result.meta_url.hostname}</span>
               <p>${result.description}</p>
-            </div>
+            </article>
             <hr />
           `);
         });
