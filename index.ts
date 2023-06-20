@@ -8,9 +8,21 @@ import { parseHTML } from "linkedom";
 // @ts-ignore
 import XHR2 from "xhr2";
 const XMLHttpRequest = XHR2.XMLHttpRequest;
+import { minify } from "html-minifier";
 
 const app = express();
 const port = 8888;
+
+const minifierOptions = {
+  collapseWhitespace: true,
+  removeComments: true,
+  removeOptionalTags: true,
+  removeRedundantAttributes: true,
+  removeScriptTypeAttributes: true,
+  removeTagWhitespace: true,
+  useShortDoctype: true,
+  minifyCSS: true,
+};
 
 // @ts-ignore
 const __filename = fileURLToPath(import.meta.url);
@@ -84,7 +96,9 @@ app.get("/", async (req, res) => {
             </html>
           `;
 
-      res.send(html);
+      const minifiedSerp = minify(html, minifierOptions);
+
+      res.send(minifiedSerp);
     };
     xhr.send();
   } catch (err) {
@@ -114,7 +128,19 @@ app.get("/blazed", async (req, res) => {
       return res.send("Something went wrong");
     }
 
-    res.send(article.content);
+    const blazedPage = `<html><head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width,initial-scale=1" />
+      <style>body {font-family: sans-serif}</style>
+    </head>
+    <body>
+     ${article.content}
+    </body></html>
+    `;
+
+    const minifiedBlazedPage = minify(blazedPage, minifierOptions);
+
+    res.send(minifiedBlazedPage);
   } catch (err) {
     console.log(err);
   }
