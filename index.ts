@@ -98,10 +98,12 @@ app.get("/blazed", async (req, res) => {
   try {
     const response = await got(pageToBlaze);
     const { document } = parseHTML(response.body);
-
     if (!isProbablyReaderable(document)) {
       return res.sendFile(path.join(__dirname, "/dist/not_blazed.html"));
     }
+
+    //TODO: find if there are more performant ways to remove images or evaluate if is the case to remove images
+    document.querySelectorAll("img").forEach((img) => img.remove());
 
     const reader = new Readability(document);
     const article = reader.parse();
