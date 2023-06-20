@@ -4,7 +4,7 @@ import { JSDOM } from "jsdom";
 import got from "got";
 import path from "path";
 import { fileURLToPath } from "url";
-import fetch from 'node-fetch'
+import fetch from "node-fetch";
 import "dotenv/config";
 
 const app = express();
@@ -21,10 +21,10 @@ app.get("/", async (req, res) => {
 
   if (!query) {
     res.sendFile(path.join(__dirname + "/dist/index.html"));
-    return
+    return;
   }
 
-  const key = process.env.CYCLIC_BRAVE_KEY
+  const key = process.env.CYCLIC_BRAVE_KEY;
 
   if (!key) {
     throw new Error("No brave key found");
@@ -32,42 +32,46 @@ app.get("/", async (req, res) => {
 
   fetch(`${searchEngine}?q=${query}`, {
     headers: {
-      "Accept": "*/*",
+      Accept: "*/*",
       "Accept-Encoding": "gzip, deflate, br",
       "X-Subscription-Token": key,
     },
   })
     .then((page) => {
-      page.json().then(response => {
-        const results: any[] = []
+      page.json().then((response) => {
+        const results: any[] = [];
+        const url = process.env.DEV_MODE
+          ? "http://localhost:8888/blazed"
+          : "https://blaze.cyclic.app/blazed";
         // @ts-ignore
-        response.web.results.forEach(result => {
+        response.web.results.forEach((result) => {
           results.push(`
             <div>
+            <a href="${url}?url=${result.url}">
               <h2>${result.title}</h2>
+              </a>              
               <span>${result.meta_url.hostname}</span>
-             <a href="https://blaze.cyclic.app/blazed?url=${result.url}">
               <p>${result.description}</p>
-             </a>              
             </div>
             <hr />
           `);
-        })
+        });
         res.send(`<html>
           <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width,initial-scale=1">
-            <title>Blaze The Page</title>
+            <title>Blaze - ${query}</title>
             <style>
+              body {font-family:sans-serif}
               h2 {margin-bottom:0}
-              span {font-size: .9rem}
+              span {font-size:.9rem}
             </style>
           </head>
           <body>
             ${results.join("")}
           </body>
         </html>`);
-      })
+      });
     })
     .catch((err) => {
       console.log(err);
@@ -75,35 +79,39 @@ app.get("/", async (req, res) => {
 });
 
 app.get("/blazed", (req, res) => {
-const pageToBlaze = req.query.url as string
- 
-got(pageToBlaze)
-   .then((response) => {
-     const dom = new JSDOM(response.body);
+  const pageToBlaze = req.query.url as string;
 
-     if (!isProbablyReaderable(dom.window.document)) {
-      res.send("This page can not be blazed... Sorry!")
-      return;
-     }
+  got(pageToBlaze)
+    .then((response) => {
+      const dom = new JSDOM(response.body);
 
-     let reader = new Readability(dom.window.document);
-     let article = reader.parse();
+      if (!isProbablyReaderable(dom.window.document)) {
+        res.sendFile(path.join(__dirname + "/dist/not_blazed.html"));
+        return;
+      }
 
-     if (!article) {
-       res.send("Something went wrong");
-       return;
-     }
+      let reader = new Readability(dom.window.document);
+      let article = reader.parse();
 
-     res.send(article.content);
-   })
-   .catch((err) => {
-     console.log(err);
-   }); 
-})
+      if (!article) {
+        res.send("Something went wrong");
+        return;
+      }
+
+      res.send(article.content);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
 
 app.get("/info", (_, res) => {
   res.sendFile(path.join(__dirname + "/dist/info.html"));
-})
+});
+
+app.get("/ooops", (_, res) => {
+  res.sendFile(path.join(__dirname + "/dist/info_not_blazed.html"));
+});
 
 app.listen(port, () => {
   console.log(`Got request`);
