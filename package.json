@@ -21,7 +21,8 @@
     "html-minifier": "^4.0.0",
     "linkedom": "^0.14.26",
     "node-html-parser": "^6.1.5",
-    "xhr": "^2.6.0"
+    "xhr": "^2.6.0",
+    "xhr2": "^0.2.1"
   },
   "devDependencies": {
     "@types/express": "^4.17.17",
