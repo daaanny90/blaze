@@ -4,7 +4,7 @@ import got from "got";
 import path from "path";
 import { fileURLToPath } from "url";
 import "dotenv/config";
-import { parseHTML } from "linkedom";
+import { parseHTML, parseJSON } from "linkedom";
 // @ts-ignore
 import XHR2 from "xhr2";
 const XMLHttpRequest = XHR2.XMLHttpRequest;
@@ -111,7 +111,30 @@ app.get("/blazed", async (req, res) => {
       headers: { Accept: "text/html" },
     });
     const { document } = parseHTML(response.body);
+
+    // TODO: missing handling of 404. The idea is to send the blaze 404 page, otherwise will show error page on client
+
     if (!isProbablyReaderable(document)) {
+      // TODO: send minimalized version of the page instead the read mode
+      // implementation draft:
+      // document.querySelectorAll("link").forEach((l) => {
+      //   l.remove();
+      // });
+
+      // document.querySelectorAll("style").forEach((s) => {
+      //   s.remove;
+      // });
+
+      // document.querySelectorAll("script").forEach((s) => {
+      //   s.remove();
+      // });
+
+      // // @ts-ignore
+      // const jsonDocument = document.toJSON();
+
+      // const cleanDocument = parseJSON(jsonDocument);
+      // return res.send(document.toString());
+
       return res.sendFile(path.join(__dirname, "/dist/not_blazed.html"));
     }
 
@@ -135,7 +158,8 @@ app.get("/blazed", async (req, res) => {
       <script>
         ${injectBlazeToPageLinks}
         const url = "${blazeUrl}"
-        injectBlazeToPageLinks(url)
+        const currentUrl = "${req.query.url}"
+        injectBlazeToPageLinks(url, currentUrl)
       </script>
     </body></html>
     `;
