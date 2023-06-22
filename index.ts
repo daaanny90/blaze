@@ -9,7 +9,11 @@ import { parseHTML, parseJSON } from "linkedom";
 import XHR2 from "xhr2";
 const XMLHttpRequest = XHR2.XMLHttpRequest;
 import { minify } from "html-minifier";
-import { blazeUrl, injectBlazeToPageLinks } from "./utils.js";
+import {
+  blazeFunctionality,
+  blazeUrl,
+  injectBlazeToPageLinks,
+} from "./utils.js";
 
 const app = express();
 const port = 8888;
@@ -88,7 +92,19 @@ app.get("/", async (req, res) => {
                 </style>
               </head>
               <body>
+                <header>
+                <label>
+                  <a href="/"><strong>BLAZE</strong></a>
+                  <input type="search" value="${query}" />
+                  <button>Blaze it</button>
+                </label>
+                </header>
+                <hr/>
                 ${results.join("")}
+                <script>
+                  ${blazeFunctionality}
+                  blazeFunctionality('${blazeUrl}') 
+                </script>
               </body>
             </html>
           `;
@@ -107,66 +123,93 @@ app.get("/blazed", async (req, res) => {
   const pageToBlaze = req.query.url as string;
 
   try {
-    const response = await got(pageToBlaze, {
-      headers: { Accept: "text/html" },
-    });
-    const { document } = parseHTML(response.body);
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", pageToBlaze, true);
+    xhr.setRequestHeader("Accept", "text/html");
 
-    // TODO: missing handling of 404. The idea is to send the blaze 404 page, otherwise will show error page on client
+    xhr.onreadystatechange = async () => {
+      if (xhr.readyState !== 4) {
+        return;
+      }
 
-    if (!isProbablyReaderable(document)) {
-      // TODO: send minimalized version of the page instead the read mode
-      // implementation draft:
-      // document.querySelectorAll("link").forEach((l) => {
-      //   l.remove();
-      // });
+      if (xhr.status === 404) {
+        res.sendFile(path.join(__dirname, "/dist/404.html"));
+        return;
+      }
 
-      // document.querySelectorAll("style").forEach((s) => {
-      //   s.remove;
-      // });
+      if (xhr.status !== 200) {
+        console.error("XHR request failed:", xhr.status, xhr.statusText);
+        return;
+      }
 
-      // document.querySelectorAll("script").forEach((s) => {
-      //   s.remove();
-      // });
+      const response = xhr.responseText;
+      const { document } = parseHTML(response);
 
-      // // @ts-ignore
-      // const jsonDocument = document.toJSON();
+      if (!isProbablyReaderable(document)) {
+        // TODO: still a lot of bugs, must be refined to handle some cases, like
+        // cookie banners, etc.
+        document.querySelectorAll("link").forEach((l) => {
+          l.remove();
+        });
 
-      // const cleanDocument = parseJSON(jsonDocument);
-      // return res.send(document.toString());
+        document.querySelectorAll("style").forEach((s) => {
+          s.remove;
+        });
 
-      return res.sendFile(path.join(__dirname, "/dist/not_blazed.html"));
-    }
+        document.querySelectorAll("script").forEach((s) => {
+          s.remove();
+        });
 
-    //TODO: find if there are more performant ways to remove images or evaluate if is the case to remove images
-    document.querySelectorAll("img").forEach((img) => img.remove());
+        const blazeDisclaimer = document.createElement("div");
+        blazeDisclaimer.style.width = "100dvw";
+        blazeDisclaimer.style.border = "1px solid red";
+        blazeDisclaimer.style.padding = "1rem";
+        blazeDisclaimer.innerHTML = `
+        <h2 style="text-align: center">BLAZE INFO</h2>
+        <p>
+          The page you are seeing <strong>could not be correctly blazed</strong> due to these webpage characteristics.
+          <strong>Blaze served anyway</strong> a lightweight version of the page.
+          Keep in mind that this kind of pages <strong>can be hard or even impossible to use, read or understand</strong>.
+        </p>
+        `;
 
-    const reader = new Readability(document);
-    const article = reader.parse();
+        const referenceElement = document.body.firstChild;
+        document.body.insertBefore(blazeDisclaimer, referenceElement);
 
-    if (!article) {
-      return res.send("Something went wrong");
-    }
+        return res.send(document.toString());
+      }
 
-    const blazedPage = `<html><head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width,initial-scale=1" />
-      <style>body {font-family: sans-serif}</style>
-    </head>
-    <body>
-     ${article.content}
-      <script>
-        ${injectBlazeToPageLinks}
-        const url = "${blazeUrl}"
-        const currentUrl = "${req.query.url}"
-        injectBlazeToPageLinks(url, currentUrl)
-      </script>
-    </body></html>
-    `;
+      //TODO: find if there are more performant ways to remove images or evaluate if is the case to remove images
+      document.querySelectorAll("img").forEach((img) => img.remove());
 
-    const minifiedBlazedPage = minify(blazedPage, minifierOptions);
+      const reader = new Readability(document);
+      const article = reader.parse();
 
-    res.send(minifiedBlazedPage);
+      if (!article) {
+        return res.send("Something went wrong");
+      }
+
+      const blazedPage = `<html><head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <style>body {font-family: sans-serif}</style>
+      </head>
+      <body>
+       ${article.content}
+        <script>
+          ${injectBlazeToPageLinks}
+          const url = "${blazeUrl}"
+          const currentUrl = "${req.query.url}"
+          injectBlazeToPageLinks(url, currentUrl)
+        </script>
+      </body></html>
+      `;
+
+      const minifiedBlazedPage = minify(blazedPage, minifierOptions);
+
+      res.send(minifiedBlazedPage);
+    };
+    xhr.send();
   } catch (err) {
     console.log(err);
   }

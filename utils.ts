@@ -23,3 +23,11 @@ export function injectBlazeToPageLinks(blazeUrl: string, currentUrl: string) {
     });
   });
 }
+
+export function blazeFunctionality(blazeUrl: string) {
+  const t = document.querySelector("button"),
+    c = document.querySelector("input");
+  t!.addEventListener("click", () => {
+    location.href = blazeUrl + "?q=" + encodeURI(c.value);
+  });
+}
