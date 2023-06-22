@@ -50,7 +50,12 @@ app.get("/", async (req, res) => {
 
   try {
     const xhr = new XMLHttpRequest();
-    xhr.open("GET", `${searchEngine}?q=${query}&safesearch=moderate`, true);
+    const formattedQuery = encodeURIComponent(query);
+    xhr.open(
+      "GET",
+      `${searchEngine}?q=${formattedQuery}&safesearch=moderate`,
+      true
+    );
     xhr.setRequestHeader("Accept", "*/*");
     xhr.setRequestHeader("X-Subscription-Token", key);
 
@@ -139,6 +144,20 @@ app.get("/blazed", async (req, res) => {
 
       if (xhr.status !== 200) {
         console.error("XHR request failed:", xhr.status, xhr.statusText);
+        res.send(`
+          <div style="display: flex; align-items: center; flex-direction: column; justify-content: center; font-family: sans-serif; width: 100%; height: 100%">
+            <h1>Blaze could not load the page :(</h1>
+            <p>Reason: <code>${xhr.status} ${xhr.statusText}</code></p>
+            <br />
+            <br />
+            <p>
+              If you want (it would be great!) you can report this problem, writing the requested URL and the reason, 
+              at <a href="mailto:support.blaze@dannyspina.com">support.blaze@dannyspina.com</a>
+            </p>
+            <br />
+            <a href="#" role="button" onclick="history.back()">Go back</a>
+          </div>
+        `);
         return;
       }
 
@@ -153,11 +172,19 @@ app.get("/blazed", async (req, res) => {
         });
 
         document.querySelectorAll("style").forEach((s) => {
-          s.remove;
+          s.remove();
         });
 
         document.querySelectorAll("script").forEach((s) => {
           s.remove();
+        });
+
+        document.querySelectorAll("img").forEach((i) => {
+          i.remove();
+        });
+
+        document.querySelectorAll("iframe").forEach((f) => {
+          f.remove();
         });
 
         const blazeDisclaimer = document.createElement("div");

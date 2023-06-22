@@ -28,6 +28,6 @@ export function blazeFunctionality(blazeUrl: string) {
   const t = document.querySelector("button"),
     c = document.querySelector("input");
   t!.addEventListener("click", () => {
-    location.href = blazeUrl + "?q=" + encodeURI(c.value);
+    location.href = blazeUrl + "?q=" + encodeURIComponent(c!.value);
   });
 }

@@ -60,7 +60,7 @@
         t = document.querySelector("button"),
         c = document.querySelector("input");
       t.addEventListener("click", () => {
-        location.href = e + "?q=" + encodeURI(c.value);
+        location.href = e + "?q=" + encodeURIComponent(c.value);
       });
     </script>
   </body>
