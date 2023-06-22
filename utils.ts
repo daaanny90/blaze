@@ -3,10 +3,10 @@ export const blazeUrl = process.env.DEV_MODE
   : "https://blaze.cyclic.app";
 
 export function injectBlazeToPageLinks(blazeUrl: string, currentUrl: string) {
+  const url = new URL(currentUrl);
   const re = new RegExp("^(http|https)://", "i");
   window.addEventListener("DOMContentLoaded", () => {
     const links = document.querySelectorAll("a");
-    console.log(links);
     links.forEach((link) => {
       let originalHref = link.getAttribute("href");
 
@@ -15,11 +15,8 @@ export function injectBlazeToPageLinks(blazeUrl: string, currentUrl: string) {
       }
 
       const isAbsoluteLink = re.test(originalHref);
-      // TODO: is still buggy, probably some href with h,t,p,s inside are detected as false positives
-      // generating an original href like "https:///"
       if (!isAbsoluteLink) {
-        const hostname = re.exec(currentUrl)![0];
-        originalHref = `${hostname}${originalHref}`;
+        originalHref = `${url.protocol}//${url.hostname}${originalHref}`;
       }
 
       link.setAttribute("href", `${blazeUrl}/blazed?url=${originalHref}`);
