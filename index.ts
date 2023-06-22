@@ -15,6 +15,8 @@ import {
   injectBlazeToPageLinks,
 } from "./utils.js";
 
+import compression from "compression";
+
 const app = express();
 const port = 8888;
 
@@ -33,6 +35,8 @@ const minifierOptions = {
 const __filename = fileURLToPath(import.meta.url);
 
 const __dirname = path.dirname(__filename);
+
+app.use(compression());
 
 app.get("/", async (req, res) => {
   const searchEngine = "https://api.search.brave.com/res/v1/web/search";
