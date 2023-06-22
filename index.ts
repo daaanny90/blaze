@@ -144,8 +144,18 @@ app.get("/blazed", async (req, res) => {
 
       if (xhr.status !== 200) {
         console.error("XHR request failed:", xhr.status, xhr.statusText);
-        res.send(`
-          <div style="display: flex; align-items: center; flex-direction: column; justify-content: center; font-family: sans-serif; width: 100%; height: 100%">
+        res.send(
+          minify(
+            `
+          <html>
+          <head>
+            <meta charset="UTF-8" />
+            <link rel="icon" type="image/x-icon" href="/favicon.svg" />
+            <meta name="viewport" content="width=device-width,initial-scale=1" />
+            <title>Blaze - error</title>
+          </head>
+          <body>
+          <div style="text-align: center; display: flex; align-items: center; flex-direction: column; justify-content: center; font-family: sans-serif; width: 100%; height: 100%">
             <h1>Blaze could not load the page :(</h1>
             <p>Reason: <code>${xhr.status} ${xhr.statusText}</code></p>
             <br />
@@ -157,7 +167,12 @@ app.get("/blazed", async (req, res) => {
             <br />
             <a href="#" role="button" onclick="history.back()">Go back</a>
           </div>
-        `);
+          </body>
+          </html>
+        `,
+            minifierOptions
+          )
+        );
         return;
       }
 
@@ -191,8 +206,9 @@ app.get("/blazed", async (req, res) => {
         blazeDisclaimer.style.width = "100dvw";
         blazeDisclaimer.style.border = "1px solid red";
         blazeDisclaimer.style.padding = "1rem";
+        blazeDisclaimer.style.textAlign = "center";
         blazeDisclaimer.innerHTML = `
-        <h2 style="text-align: center">BLAZE INFO</h2>
+        <h2>BLAZE INFO</h2>
         <p>
           The page you are seeing <strong>could not be correctly blazed</strong> due to these webpage characteristics.
           <strong>Blaze served anyway</strong> a lightweight version of the page.
@@ -203,7 +219,9 @@ app.get("/blazed", async (req, res) => {
         const referenceElement = document.body.firstChild;
         document.body.insertBefore(blazeDisclaimer, referenceElement);
 
-        return res.send(document.toString());
+        const blazedPage = minify(document.toString(), minifierOptions);
+
+        return res.send(blazedPage);
       }
 
       //TODO: find if there are more performant ways to remove images or evaluate if is the case to remove images
