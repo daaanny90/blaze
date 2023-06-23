@@ -1,11 +1,8 @@
-<h1 style="text-align: center">BLA⚡️E</h1>
+<h1 align="center">BLA⚡️E</h1>
 
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Naereen/StrapDown.js/graphs/commit-activity)
-
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
-
 [![Website shields.io](https://img.shields.io/website-up-down-green-red/https/blaze.cyclic.app)](https://blaze.cyclic.app/)
-
 [![TypeScript](https://badgen.net/badge/icon/typescript?icon=typescript&label)](https://typescriptlang.org)
 
 Blaze is an ultrafast search engine designed to minimize data transfer between clients and servers, enabling users to browse the web in a minimalist manner.
@@ -79,9 +76,7 @@ Blaze addresses the issue of slow internet connections and enables seamless brow
 2. **Reduced Bandwidth Consumption**: Blaze significantly reduces the amount of data transferred between clients and servers, resulting in lower bandwidth consumption.
 3. **Battery and Processor Efficiency**: Browsing lightweight and minimalist web pages puts less stress on the device's battery and processor, leading to improved efficiency.
 4. **Ad-Free Experience**: Blaze pages are mostly free from ads, enhancing the browsing experience and reducing distractions.
-5. \*\*Environmental
-
-Impact**: Blaze's minimal data transfer approach contributes to environmental sustainability by reducing battery drain, decreasing the need for frequent charging, and potentially lowering CO2 emissions. 6. **Emergency Search Engine\*\*: Blaze can be considered an "Emergency search engine." It provides access to critical information even in situations with poor connectivity.
+5. **Environmental Impact**: Blaze's minimal data transfer approach contributes to environmental sustainability by reducing battery drain, decreasing the need for frequent charging, and potentially lowering CO2 emissions. 6. **Emergency Search Engine\*\*: Blaze can be considered an "Emergency search engine." It provides access to critical information even in situations with poor connectivity.
 
 ## 🧑‍💻 Getting Started
 
