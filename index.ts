@@ -100,6 +100,8 @@ app.get("/", async (req, res) => {
             <html>
               <head>
                 <meta charset="UTF-8">
+                <link rel="icon" type="image/x-icon" href="/favicon.svg" />
+                <link rel="stylesheet" href="/styles/serp.css" media="print" onload="this.media='all'">
                 <meta name="viewport" content="width=device-width,initial-scale=1">
                 <title>Blaze - ${query}</title>
                 <style>
@@ -293,6 +295,14 @@ app.get("/ooops", (_, res) => {
 
 app.get("/favicon.svg", (_, res) => {
   res.sendFile(path.join(__dirname + "/favicon.svg"));
+});
+
+app.get("/service-worker.js", (_, res) => {
+  res.sendFile(path.join(__dirname + "/service-worker.js"));
+});
+
+app.get("/styles/serp.css", (_, res) => {
+  res.sendFile(path.join(__dirname + "/styles/serp.css"));
 });
 
 app.listen(port, () => {

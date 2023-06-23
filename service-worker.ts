@@ -27,7 +27,7 @@ self.addEventListener("fetch", (event: any) => {
               const cachedEtag = cachedResponse
                 ? cachedResponse.headers.get("X-Blaze-Etag")
                 : null;
-              if (currentEtag === cachedEtag) {
+              if (cachedResponse && currentEtag === cachedEtag) {
                 return cachedResponse;
               } else {
                 return cache
