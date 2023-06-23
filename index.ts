@@ -14,8 +14,9 @@ import {
   blazeUrl,
   injectBlazeToPageLinks,
 } from "./utils.js";
-
+import etag from "etag";
 import compression from "compression";
+import fs from "fs";
 
 const app = express();
 const port = 8888;
@@ -36,14 +37,21 @@ const __filename = fileURLToPath(import.meta.url);
 
 const __dirname = path.dirname(__filename);
 
+// Middlewares
 app.use(compression());
+app.use((req, res, next) => {
+  res.set("Cache-Control", "public, max-age=60000");
+  res.set("Service-Worker-Allowed", "/");
+  next();
+});
 
+// Routes
 app.get("/", async (req, res) => {
   const searchEngine = "https://api.search.brave.com/res/v1/web/search";
   const query = req.query.q as string;
 
   if (!query) {
-    return res.sendFile(path.join(__dirname, "/dist/index.html"));
+    return res.sendFile(path.join(__dirname, "/index.html"));
   }
 
   const key = process.env.CYCLIC_BRAVE_KEY;
@@ -112,7 +120,7 @@ app.get("/", async (req, res) => {
                 ${results.join("")}
                 <script>
                   ${blazeFunctionality}
-                  blazeFunctionality('${blazeUrl}') 
+                  blazeFunctionality('${blazeUrl}')
                 </script>
               </body>
             </html>
@@ -120,6 +128,7 @@ app.get("/", async (req, res) => {
 
       const minifiedSerp = minify(html, minifierOptions);
 
+      res.set("X-Blaze-Etag", etag(minifiedSerp));
       res.send(minifiedSerp);
     };
     xhr.send();
@@ -142,7 +151,7 @@ app.get("/blazed", async (req, res) => {
       }
 
       if (xhr.status === 404) {
-        res.sendFile(path.join(__dirname, "/dist/404.html"));
+        res.sendFile(path.join(__dirname, "/404.html"));
         return;
       }
 
@@ -265,11 +274,21 @@ app.get("/blazed", async (req, res) => {
 });
 
 app.get("/info", (_, res) => {
-  res.sendFile(path.join(__dirname + "/dist/info.html"));
+  let Etag;
+  fs.readFile(path.join(__dirname + "/info.html"), "utf8", (err, data) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+
+    Etag = etag(data);
+    res.set("X-Blaze-Etag", Etag);
+    res.sendFile(path.join(__dirname + "/info.html"));
+  });
 });
 
 app.get("/ooops", (_, res) => {
-  res.sendFile(path.join(__dirname + "/dist/info_not_blazed.html"));
+  res.sendFile(path.join(__dirname + "/info_not_blazed.html"));
 });
 
 app.get("/favicon.svg", (_, res) => {

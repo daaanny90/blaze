@@ -8,6 +8,7 @@
       name="description"
       content="Blaze: The search engine for seamless browsing in challenging connections. Discover fast results and access online content efficiently."
     />
+    <meta http-equiv="Cache-control" content="public" />
     <title>Blaze</title>
     <style>
       body {
@@ -62,6 +63,17 @@
       t.addEventListener("click", () => {
         location.href = e + "?q=" + encodeURIComponent(c.value);
       });
+
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker
+          .register("/service-worker.js")
+          .catch((error) => {
+            console.log(
+              "Something went wrong with installation of the service worker:",
+              error
+            );
+          });
+      }
     </script>
   </body>
 </html>
