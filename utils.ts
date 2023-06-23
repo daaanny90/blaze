@@ -31,3 +31,24 @@ export function blazeFunctionality(blazeUrl: string) {
     location.href = blazeUrl + "?q=" + encodeURIComponent(c!.value);
   });
 }
+
+export function highlightBlazedLinks(links: HTMLLinkElement[]) {
+  links.forEach((link) => {
+    if (
+      !link.href ||
+      link.href === "http://localhost:8888/" ||
+      link.href === "https://blaze.cyclic.app"
+    ) {
+      return;
+    }
+
+    const url = new URL(link.href);
+    caches.open("blaze").then((cache) => {
+      cache.match(url.href).then((response) => {
+        if (response) {
+          link.innerHTML = `${link.textContent} ⚡`;
+        }
+      });
+    });
+  });
+}

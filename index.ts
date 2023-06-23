@@ -12,6 +12,7 @@ import { minify } from "html-minifier";
 import {
   blazeFunctionality,
   blazeUrl,
+  highlightBlazedLinks,
   injectBlazeToPageLinks,
 } from "./utils.js";
 import etag from "etag";
@@ -86,9 +87,9 @@ app.get("/", async (req, res) => {
       const results = data.web.results.map(
         (result: any) => `
             <article>
-              <a href="${blazeUrl}/blazed?url=${result.url}">
-                <h2>${result.title}</h2>
-              </a>
+              <h2><a href="${blazeUrl}/blazed?url=${result.url}">
+                ${result.title}
+              </a></h2>
               <span>${result.meta_url.hostname}</span>
               <p>${result.description}</p>
             </article>
@@ -122,7 +123,12 @@ app.get("/", async (req, res) => {
                 ${results.join("")}
                 <script>
                   ${blazeFunctionality}
+                  ${highlightBlazedLinks}
+
                   blazeFunctionality('${blazeUrl}')
+                  const links = document.querySelectorAll('a')
+                  highlightBlazedLinks(links)
+
                 </script>
               </body>
             </html>
@@ -261,6 +267,10 @@ app.get("/blazed", async (req, res) => {
           const url = "${blazeUrl}"
           const currentUrl = "${req.query.url}"
           injectBlazeToPageLinks(url, currentUrl)
+
+          ${highlightBlazedLinks}
+          const links = document.querySelectorAll('a')
+          highlightBlazedLinks(links)
         </script>
       </body></html>
       `;
