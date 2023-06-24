@@ -134,10 +134,14 @@ app.get("/", async (req, res) => {
             </html>
           `;
 
-      const minifiedSerp = minify(html, minifierOptions);
-
-      res.set("X-Blaze-Etag", etag(minifiedSerp));
-      res.send(minifiedSerp);
+      try {
+        const minifiedSerp = minify(html, minifierOptions);
+        res.set("X-Blaze-Etag", etag(minifiedSerp));
+        res.send(minifiedSerp);
+      } catch (e) {
+        console.log("Error during html minifier:", e);
+        res.sendFile(path.join(__dirname, "/not_blazed.html"));
+      }
     };
     xhr.send();
   } catch (err) {
