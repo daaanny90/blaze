@@ -1,0 +1,42 @@
+{{~ include("./search.eta", it) }}
+<ol class="blaze_results">
+  {{ it.results.forEach(function(result){ }}
+  <li>
+    <a href="{{= result.url }}">
+      <article>
+        <pre>{{= result.url }}</pre>
+        <h2>{{= result.title }}</h2>
+        <p>{{~ result.description }}</p>
+      </article>
+    </a>
+  </li>
+  {{ }) }}
+</ol>
+<style>
+  .blaze_results li {
+    margin-bottom: 2rem;
+  }
+
+  .blaze_results a {
+    color: inherit;
+    text-decoration: inherit;
+  }
+
+  .blaze_results pre {
+    margin: 0;
+    overflow: auto;
+    font-size: 0.75em;
+  }
+  .blaze_results p {
+    margin: 0;
+  }
+  .blaze_results h2 {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  ol.blaze_results {
+    list-style: none;
+    padding: 0;
+  }
+</style>

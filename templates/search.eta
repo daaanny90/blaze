@@ -1,0 +1,48 @@
+<form class="blaze_form" action="/search" method="get">
+  <a style="font-size: 2rem; font-weight: bold" href="/" data-preserve-link>Bla⚡️e</a>
+  <input type="search" name="q" placeholder="search something..." value="{{= it.needle }}" />
+  <button type="submit">Search 🔎</button>
+</form>
+<style>
+  form.blaze_form {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-end;
+    padding: 0.5rem;
+    border: 2px dashed black;
+  }
+
+  .blaze_form a {
+    text-decoration: inherit;
+    color: inherit;
+    margin-right: 1rem;
+  }
+
+  .blaze_form input,
+  .blaze_form button {
+    border-radius: 0;
+    background-color: var(--blaze-bg);
+    color: var(--blaze-text);
+    border: 2px solid var(--blaze-primary);
+  }
+  .blaze_form input {
+    padding: 0.25rem 0.25rem;
+    min-width: 10rem;
+    flex: 1;
+  }
+  .blaze_form button {
+    padding: 0.25rem 0.5rem;
+    cursor: pointer;
+  }
+
+  @media screen and (max-width: 30rem) {
+    form.blaze_form {
+      flex-direction: column;
+      align-items: center;
+    }
+    .blaze_form input,
+    .blaze_form button {
+      width: 100%;
+    }
+  }
+</style>
