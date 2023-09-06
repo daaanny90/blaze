@@ -1,0 +1,8 @@
+version: '3.9'
+
+services:
+  app:
+    build: .
+    env_file: .env
+    ports:
+      - 80:8000
