@@ -6,21 +6,7 @@ import { replaceLinks } from './html.js'
 import { init as initRoutes } from './routes.js'
 import { init as initError } from './error.js'
 
-const app = Fastify({
-  logger:
-    process.env.NODE_ENV === 'production'
-      ? true
-      : {
-          level: 'debug',
-          transport: {
-            target: 'pino-pretty',
-            options: {
-              translateTime: 'HH:MM:ss Z',
-              ignore: 'pid,hostname,remoteAddress',
-            },
-          },
-        },
-})
+const app = Fastify()
 
 declare module 'fastify' {
   interface FastifyInstance {
