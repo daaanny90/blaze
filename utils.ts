@@ -1,7 +1,17 @@
+/**
+ * Current blaze url, based on dev or prod environment.
+ */
 export const blazeUrl = process.env.DEV_MODE
   ? "http://localhost:8888"
   : "https://blaze.cyclic.app";
 
+/**
+ * Change every link found in the page to a blaze query.
+ * In this way, every link found in the page will bring to a blazed version of it.
+ *
+ * @param blazeUrl - Current blaze url
+ * @param currentUrl - Url of the current blazed page
+ */
 export function injectBlazeToPageLinks(blazeUrl: string, currentUrl: string) {
   const url = new URL(currentUrl);
   const re = new RegExp("^(http|https)://", "i");
@@ -24,6 +34,11 @@ export function injectBlazeToPageLinks(blazeUrl: string, currentUrl: string) {
   });
 }
 
+/**
+ * Start the search clicking the button on the home page.
+ *
+ * @param blazeUrl The current blaze url
+ */
 export function blazeFunctionality(blazeUrl: string) {
   const t = document.querySelector("button"),
     c = document.querySelector("input");
@@ -32,6 +47,10 @@ export function blazeFunctionality(blazeUrl: string) {
   });
 }
 
+/**
+ * Put a little light on the links that are already visited and found in the cache
+ * and that are reachable also offline, other than open in milliseconds.
+ */
 export function highlightBlazedLinks(links: HTMLLinkElement[]) {
   links.forEach((link) => {
     if (
