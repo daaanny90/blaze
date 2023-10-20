@@ -1,11 +1,9 @@
 import express from "express";
 import { Readability, isProbablyReaderable } from "@mozilla/readability";
-import got from "got";
 import path from "path";
 import { fileURLToPath } from "url";
 import "dotenv/config";
 import { parseHTML, parseJSON } from "linkedom";
-// @ts-ignore
 import XHR2 from "xhr2";
 const XMLHttpRequest = XHR2.XMLHttpRequest;
 import { minify } from "html-minifier";
@@ -33,10 +31,18 @@ const minifierOptions = {
   minifyCSS: true,
 };
 
-// @ts-ignore
 const __filename = fileURLToPath(import.meta.url);
 
 const __dirname = path.dirname(__filename);
+
+export type SerpResponse = {
+  url: string;
+  title: string;
+  description: string;
+  meta_url: {
+    hostname: string;
+  };
+};
 
 // Middlewares
 app.use(compression());
@@ -83,9 +89,8 @@ app.get("/", async (req, res) => {
       }
       const data = JSON.parse(xhr.responseText);
 
-      // @ts-ignore
       const results = data.web.results.map(
-        (result: any) => `
+        (result: SerpResponse) => `
             <article>
               <h2><a href="${blazeUrl}/blazed?url=${result.url}">
                 ${result.title}
