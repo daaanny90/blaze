@@ -37,6 +37,7 @@
         padding: 1rem;
       }
       h1 {
+        margin-block: 0.67em;
         font-size: 3rem;
       }
     </style>
@@ -55,25 +56,6 @@
       <a href="/info">What is this?</a>
       <a href="https://www.buymeacoffee.com/dannyspina">Buy me a 🍺</a>
     </footer>
-    <script>
-      const DEV = 0,
-        e = DEV ? "http://localhost:8888" : "https://blaze.cyclic.app",
-        t = document.querySelector("button"),
-        c = document.querySelector("input");
-      t.addEventListener("click", () => {
-        location.href = e + "?q=" + encodeURIComponent(c.value);
-      });
-
-      if ("serviceWorker" in navigator) {
-        navigator.serviceWorker
-          .register("/service-worker.js")
-          .catch((error) => {
-            console.log(
-              "Something went wrong with installation of the service worker:",
-              error
-            );
-          });
-      }
-    </script>
+    <script type="module" src="start_up.js"></script>
   </body>
 </html>

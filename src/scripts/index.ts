@@ -44,9 +44,35 @@ export type SerpResponse = {
   };
 };
 
+// app.use(express.static("public"));
+
+if (process.env.NODE_ENV === "development") {
+  // app.use(express.static("dist"));
+
+  // so the sourceMaps original files can be found
+  app.get("*.ts", (req, res, next) => {
+    const urlArray = req.path.split("/");
+    const filename = urlArray.pop();
+    const dirname = __dirname.replace("/dist", "");
+
+    if (!filename) {
+      res.sendStatus(404);
+      return;
+    }
+
+    const mappath = path.join(dirname, "src/scripts", filename);
+    if (fs.existsSync(mappath)) {
+      res.sendFile(mappath);
+    } else {
+      next();
+    }
+  });
+}
+
 // Middlewares
 app.use(compression());
 app.use((req, res, next) => {
+  console.log(`Request received: ${req.method} ${req.path}`);
   res.set("Cache-Control", "public, max-age=60000");
   res.set("Service-Worker-Allowed", "/");
   next();
@@ -58,7 +84,9 @@ app.get("/", async (req, res) => {
   const query = req.query.q as string;
 
   if (!query) {
-    return res.sendFile(path.join(__dirname, "/index.html"));
+    console.log("No query parameter, serving home page template");
+    const homePageTemplate = path.join(__dirname, "index.html");
+    return res.sendFile(homePageTemplate);
   }
 
   const key = process.env.CYCLIC_BRAVE_KEY;
@@ -312,17 +340,16 @@ app.get("/ooops", (_, res) => {
   res.sendFile(path.join(__dirname + "/info_not_blazed.html"));
 });
 
-app.get("/favicon.svg", (_, res) => {
-  res.sendFile(path.join(__dirname + "/favicon.svg"));
-});
-
 app.get("/service-worker.js", (_, res) => {
   res.sendFile(path.join(__dirname + "/service-worker.js"));
 });
 
-app.get("/styles/serp.css", (_, res) => {
-  res.sendFile(path.join(__dirname + "/styles/serp.css"));
-});
+// Static file middleware - placed after routes so routes take precedence
+app.use(express.static("public"));
+
+if (process.env.NODE_ENV === "development") {
+  app.use(express.static("dist"));
+}
 
 app.listen(port, () => {
   console.log(`Got request`);

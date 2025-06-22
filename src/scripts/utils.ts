@@ -1,9 +1,10 @@
 /**
  * Current blaze url, based on dev or prod environment.
  */
-export const blazeUrl = process.env.DEV_MODE
-  ? "http://localhost:8888"
-  : "https://blaze.cyclic.app";
+export const blazeUrl =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:8888"
+    : "https://blaze.cyclic.app";
 
 /**
  * Change every link found in the page to a blaze query.

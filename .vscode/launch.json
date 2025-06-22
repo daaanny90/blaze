@@ -2,12 +2,25 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Chromium",
-      "type": "chrome",
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Node.js Server",
+      "program": "${workspaceFolder}/dist/index.js",
+      "preLaunchTask": "npm: build",
+      "outFiles": [
+        "${workspaceFolder}/dist/**/*.js"
+      ],
+      "sourceMaps": true,
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
+    },
+    {
+      "name": "Launch Firefox",
+      "type": "firefox",
       "request": "launch",
       "url": "http://localhost:8888",
-      "webRoot": "${workspaceRoot}",
-      "runtimeExecutable": "/Applications/Chromium.app/Contents/MacOS/chromium"
+      "webRoot": "${workspaceFolder}"
     }
   ]
 }

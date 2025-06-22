@@ -86,8 +86,9 @@ To run your own instance of Blaze or contribute to the project, follow these ste
 1. Clone the repository: `git clone https://github.com/daaanny90/blaze-this-page.git`
 2. Install the dependencies: `npm install`
 3. Set up environment variables:
-   - Create a `.env` file in the root directory.
-   - Add your Brave Search key as `CYCLIC_BRAVE_KEY` in the `.env` file.
+   - Rename the `.env.dis` in `.env` in the root directory.
+   - Add your Brave Search key using the variable `CYCLIC_BRAVE_KEY`
+   - Eventually set the `NODE_ENV` to `"development"`
 4. Start the server: `npm start`
 5. Access Blaze in your browser at `http://localhost:8888`
 
