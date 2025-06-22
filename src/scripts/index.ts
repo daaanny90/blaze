@@ -1,5 +1,4 @@
 import express from "express";
-import { Readability, isProbablyReaderable } from "@mozilla/readability";
 import path from "path";
 import { fileURLToPath } from "url";
 import "dotenv/config";
@@ -16,6 +15,7 @@ import {
 import etag from "etag";
 import compression from "compression";
 import fs from "fs";
+import { extractContent } from "./readabilityParser.js";
 
 const app = express();
 const port = 8888;
@@ -236,61 +236,7 @@ app.get("/blazed", async (req, res) => {
 
       const response = xhr.responseText;
       const { document } = parseHTML(response);
-
-      if (!isProbablyReaderable(document)) {
-        // TODO: still a lot of bugs, must be refined to handle some cases, like
-        // cookie banners, etc.
-        document.querySelectorAll("link").forEach((l) => {
-          l.remove();
-        });
-
-        document.querySelectorAll("style").forEach((s) => {
-          s.remove();
-        });
-
-        document.querySelectorAll("script").forEach((s) => {
-          s.remove();
-        });
-
-        document.querySelectorAll("img").forEach((i) => {
-          i.remove();
-        });
-
-        document.querySelectorAll("iframe").forEach((f) => {
-          f.remove();
-        });
-
-        const blazeDisclaimer = document.createElement("div");
-        blazeDisclaimer.style.width = "100dvw";
-        blazeDisclaimer.style.border = "1px solid red";
-        blazeDisclaimer.style.padding = "1rem";
-        blazeDisclaimer.style.textAlign = "center";
-        blazeDisclaimer.innerHTML = `
-        <h2>BLAZE INFO</h2>
-        <p>
-          The page you are seeing <strong>could not be correctly blazed</strong> due to these webpage characteristics.
-          <strong>Blaze served anyway</strong> a lightweight version of the page.
-          Keep in mind that this kind of pages <strong>can be hard or even impossible to use, read or understand</strong>.
-        </p>
-        `;
-
-        const referenceElement = document.body.firstChild;
-        document.body.insertBefore(blazeDisclaimer, referenceElement);
-
-        const blazedPage = minify(document.toString(), minifierOptions);
-
-        return res.send(blazedPage);
-      }
-
-      //TODO: find if there are more performant ways to remove images or evaluate if is the case to remove images
-      document.querySelectorAll("img").forEach((img) => img.remove());
-
-      const reader = new Readability(document);
-      const article = reader.parse();
-
-      if (!article) {
-        return res.send("Something went wrong");
-      }
+      const pageContent = extractContent(document);
 
       const blazedPage = `<html><head>
         <meta charset="UTF-8" />
@@ -298,7 +244,7 @@ app.get("/blazed", async (req, res) => {
         <style>body {font-family: sans-serif}</style>
       </head>
       <body>
-       ${article.content}
+       ${pageContent?.content}
         <script>
           ${injectBlazeToPageLinks}
           const url = "${blazeUrl}"

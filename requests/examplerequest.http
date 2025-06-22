@@ -1,1 +1,1 @@
-GET {{baseUrl}}?q=hello
+GET {{baseUrl}}?q=car
